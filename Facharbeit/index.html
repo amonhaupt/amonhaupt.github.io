@@ -4,6 +4,8 @@
     <title>Facharbeit</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <!-- <script src="model.js"></script> -->
     <style>
         * {
             box-sizing: border-box;
@@ -15,6 +17,18 @@
             display: flex;
             min-height: 100vh;
             flex-direction: column;
+        }
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+        }
+        p span {
+            font-size: 40px;
+            color: rgb(233, 0, 0);
+        }
+        button {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
         }
         .sidebar {
             margin: 0;
@@ -90,25 +104,25 @@
 </head>
 <body scroll="no" style="overflow: hidden">
     <div class="sidebar">
-        <a id="link1" class="active" href="" onclick="return show('home', 'link1');">home</a>
-        <a id="link2" href="" onclick="return show('example1', 'link2');">example1</a>
+        <a id="link1" class="active" href="" onclick="return show('home', 'link1');">Startseite</a>
+        <a id="link2" href="" onclick="return show('example1', 'link2');">Ziffernerkennung</a>
         <a id="link3" href="" onclick="return show('example2', 'link3');">example2</a>
         <a id="link4" href="" onclick="return show('example3', 'link4');">example3</a>
     </div>
     <div id="home">
         <div class="content">
-                <h1>home</h1>
+                <h1>Startseite</h1>
                 <p>text text text text text text text text text text text text text text text text text text</p>
         </div>
     </div>
     <div id="example1" style="display: none;">
         <div class="content">
-                <h1>example1</h1>
+                <h1>Ziffernerkennung</h1>
                 <canvas class="drawing_canvas" id="drawing_canvas"></canvas>
+                <div>
                 <button class="delete_button" onclick="delete_canvas()">Löschen</button>
-                <button id="save_button" class="save_button" onclick="save_canvas()">save</button>
-                <button id="grey_save_button" class="grey_save_button" onclick="grey_save_canvas()">grey_save</button>
-                <p>text text text text text text text text text text text text text text text text text text</p>
+                </div>
+                <p>Das KI-Modell erkennt eine <span id="prediction_label"> </span></p>
         </div>
     </div>
     <div id="example2" style="display: none;">
@@ -160,8 +174,8 @@
                     canvas.height = window.innerWidth/2;
                     canvas.width = window.innerWidth/2; //elif window.innerwidth > x == width/3
                 } else {
-                    canvas.height = window.innerHeight/2;
-                    canvas.width = window.innerHeight/2;
+                    canvas.height = window.innerHeight/3;
+                    canvas.width = window.innerHeight/3;
                 }
                 draw(canvas);
             }
@@ -192,7 +206,7 @@
 
                 if (is_drawing) {
                     context.beginPath();
-                    context.lineWidth = 15;
+                    context.lineWidth = 20;
                     context.lineCap = "round";
                     context.strokeStyle = "rgb(233, 0, 0)";
                     context.moveTo(mouse_pos.x, mouse_pos.y);
@@ -205,7 +219,7 @@
             function stop_drawing() {
                 is_drawing = false;
                 context.closePath();
-                input_data();
+                predict();
             }
             
             function get_touch_position(e) {
@@ -246,53 +260,40 @@
                 }
                 is_drawing = false;
                 context.closePath();
-                input_data();
+                predict();
             }
         });
         function delete_canvas() {
                 context.clearRect(0, 0, canvas.width, canvas.height);
             }
         
+        async function loadModel() {
+            model = undefined; 
+            model = await tf.loadGraphModel("models/model.json");
+        }
+        loadModel();
 
-        //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL
-        //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
-        function input_data() {
+        async function predict() {
             var input_canvas = document.createElement("canvas");
             input_canvas.width = 28;
             input_canvas.height = 28;
             var input_context = input_canvas.getContext("2d");
             input_context.filter = "grayscale(1)"
             input_context.drawImage(canvas, 0, 0, 28, 28);
-            var input_dataURL = input_canvas.toDataURL("image/png");
-            console.log(input_context.getImageData(0, 0, 28, 28).data);
-        }
+            const imageData = input_context.getImageData(0, 0, 28, 28);
+            const data = imageData.data;
+            var input_array = [];
 
-        function save_canvas() {
-            var input_canvas = document.createElement("canvas");
-            input_canvas.width = 28;
-            input_canvas.height = 28;
-            var input_context = input_canvas.getContext("2d");
-            input_context.drawImage(canvas, 0, 0, 28, 28);
-            var input_dataURL = input_canvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.href = input_dataURL;
-            link.download = "input_canvas.jpg";
-            link.click();
-        }
-
-        function grey_save_canvas() {
-            var input_canvas = document.createElement("canvas");
-            input_canvas.width = 28;
-            input_canvas.height = 28;
-            var input_context = input_canvas.getContext("2d");
-            input_context.filter = "grayscale(1)"
-            input_context.drawImage(canvas, 0, 0, 28, 28);
-            var input_dataURL = input_canvas.toDataURL("image/png");
-            console.log(input_context.getImageData(0, 0, 28, 28).data);
-            const link = document.createElement("a");
-            link.href = input_dataURL;
-            link.download = "grey_input_canvas.jpg";
-            link.click();
+            for(var i =0; i < data.length; i += 4) {
+                input_array.push(data[i] / 255);
+            }
+            console.log(input_array);
+            model.predict([tf.tensor(input_array).reshape([1,28,28,1])]).array().then(function(scores) {
+                scores = scores[0];
+                predicted = scores.indexOf(Math.max(...scores));
+                console.log(predicted);
+                document.getElementById("prediction_label").textContent=predicted;
+            });
         }
     </script>
 </body>

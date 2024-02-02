@@ -4,7 +4,13 @@ body {
     justify-content: center;
   }
 
+#show_button {
+    margin: auto;
+    width: 50px;
+  }
+
 #digital_clock {
+    display: none;
     font-family: "Orbitron", sans-serif;
     color: rgb(0, 0, 0);
     font-size: 56px;

@@ -1,3 +1,17 @@
+var shown = false;
+
+function show() {
+    if(shown == false) {
+        document.getElementById("digital_clock").style.display="block";
+        shown = true;
+    }
+    else {
+        document.getElementById("digital_clock").style.display="none";
+        shown = false;
+    }
+}
+
+
 var hour_handle_size = 2;
 var minute_handle_size = 3;
 var second_handle_size = 5;
@@ -10,7 +24,7 @@ function current_time() {
     hour = update_time(hour);
     minute = update_time(minute);
     second = update_time(second);
-    // document.getElementById("digital_clock").innerHTML = hour + " : " + minute + " : " + second;
+    document.getElementById("digital_clock").innerHTML = hour + " : " + minute + " : " + second;
 
     var t = setTimeout(function(){ current_time() }, 1000);
 

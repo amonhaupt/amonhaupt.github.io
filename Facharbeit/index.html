@@ -5,109 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <link rel="stylesheet" href="style.css">
     <!-- <script src="model.js"></script> -->
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-        }
-        p {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 20px;
-        }
-        p span {
-            font-size: 40px;
-            color: rgb(233, 0, 0);
-        }
-        button {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 20px;
-        }
-        .sidebar {
-            margin: 0;
-            padding: 0;
-            width: 200px;
-            background-color: #f1f1f1;
-            position: fixed;
-            height: 100%;
-            overflow: auto;
-        }
-        .sidebar a {
-            display: block;
-            color: black;
-            padding: 16px;
-            text-decoration: none;
-        }
-        .sidebar a.active {
-            background-color: rgb(233, 0, 0);
-            color: white;
-        }
-        @media (hover: hover) {
-            .sidebar a:hover {
-                background-color: rgb(121, 121, 121);
-                color: white;
-            }  
-        }
-        div.content {
-            margin-left: 200px;
-            padding: 1px 16px;
-            height: 1000px;
-        }
-        @media screen and (max-width: 700px) {
-        .sidebar {
-            width: 100%;
-            height: auto;
-            position: relative;
-        }
-        .sidebar a {float: left;}
-        div.content {margin-left: 0;}
-        }
-        @media screen and (max-width: 400px) {
-            .sidebar a {
-                text-align: center;
-                float: none;
-            }
-        }
-        .content {
-            margin-left: 215px;
-            padding: 15px;
-            flex: 1;
-        }
-        .drawing_canvas {
-            border: solid 3px rgb(233, 0, 0);
-        }
-        .delete_button {
-            background-color: rgb(233, 0, 0);
-            border: none;
-            color: rgb(255, 255, 255);
-            padding: 10px 10px;
-            text-align: center;
-            font-size: 15px;
-        }
-        .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            color: rgb(121, 121, 121);
-            font-size: 11px;
-            text-align: center;   
-        }
-    </style>
 </head>
 <body scroll="no" style="overflow: hidden">
     <div class="sidebar">
         <a id="link1" class="active" href="" onclick="return show('home', 'link1');">Startseite</a>
         <a id="link2" href="" onclick="return show('example1', 'link2');">Ziffernerkennung</a>
         <a id="link3" href="" onclick="return show('example2', 'link3');">example2</a>
-        <a id="link4" href="" onclick="return show('example3', 'link4');">example3</a>
+        <a id="link4" href="" onclick="return show('example3', 'link4');">Tic-Tac-Toe</a>
     </div>
     <div id="home">
         <div class="content">
@@ -133,167 +39,25 @@
     </div>
     <div id="example3" style="display: none;">
         <div class="content">
-                <h1>example3</h1>
+                <h1>Tic-Tac-Toe</h1>
+                <div id="tictactoe_game">
+                    <div id="cells">
+                        <div id="cell0" cell_index="0" class="cell"></div>
+                        <div id="cell1" cell_index="1" class="cell"></div>
+                        <div id="cell2" cell_index="2" class="cell"></div>
+                        <div id="cell3" cell_index="3" class="cell"></div>
+                        <div id="cell4" cell_index="4" class="cell"></div>
+                        <div id="cell5" cell_index="5" class="cell"></div>
+                        <div id="cell6" cell_index="6" class="cell"></div>
+                        <div id="cell7" cell_index="7" class="cell"></div>
+                        <div id="cell8" cell_index="8" class="cell"></div>
+                    </div>
+                    <button id="restart_button">Neues Spiel</button>
+                    <p id="status_text"></p>
+                </div>
                 <p>text text text text text text text text text text text text text text text text text text</p>
         </div>
     </div>
-    <script>
-        var previous = "home"
-        var previous_link = "link1"
-        function show(shown, link) {
-            if (shown == previous) {
-                return false;
-            } else {
-                document.getElementById(shown).style.display="block";
-                document.getElementById(link).classList.add("active");
-                document.getElementById(previous).style.display="none";
-                document.getElementById(previous_link).classList.remove("active");
-                previous = shown
-                previous_link = link
-                return false;
-            }
-        }
-
-        //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
-        //https://developer.mozilla.org/en-US/docs/Web/API/Path2D
-        //https://developer.mozilla.org/en-US/docs/Web/API/Element/mousedown_event
-        //https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
-
-        var canvas = document.getElementById("drawing_canvas");
-        var context = canvas.getContext("2d");
-        document.addEventListener("DOMContentLoaded", function() {
-            var mouse_pos = { x: 0, y: 0 };
-            var touch_pos = { x: 0, y: 0};
-            let is_drawing = false;
-            
-            var line_width = 20;
-
-            function resize_canvas() {
-                if (window.innerHeight > window.innerWidth) {
-                    canvas.height = window.innerWidth/2;
-                    canvas.width = window.innerWidth/2; //elif window.innerwidth > x == width/3
-                } else {
-                    canvas.height = window.innerHeight/3;
-                    canvas.width = window.innerHeight/3;
-                }
-                draw(canvas);
-            }
-            resize_canvas();
-
-            canvas.addEventListener("mousedown", start_drawing);
-            canvas.addEventListener("mousemove", draw);
-            canvas.addEventListener("mouseup", stop_drawing);
-            canvas.addEventListener("mouseout", stop_drawing);
-
-            canvas.addEventListener("touchstart", start_touch_drawing);
-            canvas.addEventListener("touchmove", touch_draw);
-            canvas.addEventListener("touchend", stop_touch_drawing);
-
-            function get_position(e) {
-                mouse_pos.x = e.clientX - canvas.getBoundingClientRect().left;
-                mouse_pos.y = e.clientY - canvas.getBoundingClientRect().top;
-            }
-
-            function start_drawing(e) {
-                is_drawing = true;
-                get_position(e);
-                draw(e);
-            }
-
-            function draw(e) {
-                if (!is_drawing) return;
-
-                if (is_drawing) {
-                    context.beginPath();
-                    context.lineWidth = line_width;
-                    context.lineCap = "round";
-                    context.strokeStyle = "rgb(233, 0, 0)";
-                    context.moveTo(mouse_pos.x, mouse_pos.y);
-                    get_position(e);
-                    context.lineTo(mouse_pos.x, mouse_pos.y);
-                    context.stroke();                    
-                }
-            }
-
-            function stop_drawing() {
-                is_drawing = false;
-                context.closePath();
-                predict();
-            }
-            
-            function get_touch_position(e) {
-                touch_pos.x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-                touch_pos.y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
-            }
-
-            function start_touch_drawing(e) {
-                if (e.target == canvas) {
-                    e.preventDefault();
-                }
-                is_drawing = true;
-                get_touch_position(e);
-                touch_draw(e);
-            }
-
-            function touch_draw(e) {
-                if (e.target == canvas) {
-                    e.preventDefault();
-                }
-                if (!is_drawing) return;
-
-                if (is_drawing) {
-                    context.beginPath();
-                    context.lineWidth = line_width;
-                    context.lineCap = "round";
-                    context.strokeStyle = "rgb(233, 0, 0)";
-                    context.moveTo(touch_pos.x, touch_pos.y);
-                    get_touch_position(e);
-                    context.lineTo(touch_pos.x, touch_pos.y);
-                    context.stroke();                    
-                }
-            }
-
-            function stop_touch_drawing(e) {
-                if (e.target == canvas) {
-                    e.preventDefault();
-                }
-                is_drawing = false;
-                context.closePath();
-                predict();
-            }
-        });
-        function delete_canvas() {
-                context.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        
-        async function loadModel() {
-            model = undefined; 
-            model = await tf.loadGraphModel("models/model.json");
-        }
-        loadModel();
-
-        async function predict() {
-            var input_canvas = document.createElement("canvas");
-            input_canvas.width = 28;
-            input_canvas.height = 28;
-            var input_context = input_canvas.getContext("2d");
-            input_context.filter = "grayscale(1)"
-            input_context.drawImage(canvas, 0, 0, 28, 28);
-            const imageData = input_context.getImageData(0, 0, 28, 28);
-            const data = imageData.data;
-            var input_array = [];
-
-            for(var i =0; i < data.length; i += 4) {
-                input_array.push(data[i] / 255);
-            }
-            console.log(input_array);
-            model.predict([tf.tensor(input_array).reshape([1,28,28,1])]).array().then(function(scores) {
-                scores = scores[0];
-                predicted = scores.indexOf(Math.max(...scores));
-                console.log(predicted);
-                document.getElementById("prediction_label").textContent=predicted;
-            });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

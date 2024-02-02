@@ -1,0 +1,123 @@
+
+* {
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+p span {
+    font-size: 40px;
+    color: rgb(233, 0, 0);
+}
+button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+.sidebar a {
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+}
+.sidebar a.active {
+    background-color: rgb(233, 0, 0);
+    color: white;
+}
+@media (hover: hover) {
+    .sidebar a:hover {
+        background-color: rgb(121, 121, 121);
+        color: white;
+    }  
+}
+div.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+    height: 1000px;
+}
+@media screen and (max-width: 700px) {
+.sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+}
+.sidebar a {float: left;}
+div.content {margin-left: 0;}
+}
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: center;
+        float: none;
+    }
+}
+.content {
+    margin-left: 215px;
+    padding: 15px;
+    flex: 1;
+}
+.drawing_canvas {
+    border: solid 3px rgb(233, 0, 0);
+}
+.delete_button {
+    background-color: rgb(233, 0, 0);
+    border: none;
+    color: rgb(255, 255, 255);
+    padding: 10px 10px;
+    text-align: center;
+    font-size: 15px;
+}
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: rgb(121, 121, 121);
+    font-size: 11px;
+    text-align: center;   
+}
+.cell {
+    width: 75px;
+    height: 75px;
+    border: 2px solid;
+    box-shadow: 0 0 0 2px;
+    line-height: 75px;
+    font-size: 50px;
+    cursor: pointer;
+    color: rgb(233, 0, 0);
+}
+#cells {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    width: 225px;
+    margin: auto;
+}
+#tictactoe_game {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;   
+}
+#restart_button {
+    background-color: rgb(233, 0, 0);
+    border: none;
+    color: rgb(255, 255, 255);
+    padding: 10px 10px;
+    text-align: center;
+    font-size: 15px;
+    margin-top: 10px;
+}

@@ -12,13 +12,16 @@
     <div class="sidebar">
         <a id="link1" class="active" href="" onclick="return show('home', 'link1');">Startseite</a>
         <a id="link2" href="" onclick="return show('example1', 'link2');">Ziffernerkennung</a>
-        <a id="link3" href="" onclick="return show('example2', 'link3');">example2</a>
+        <a id="link3" href="" onclick="return show('example2', 'link3');">Objekterkennung</a>
         <a id="link4" href="" onclick="return show('example3', 'link4');">Tic-Tac-Toe</a>
     </div>
     <div id="home">
         <div class="content">
+            <section id="startpage" class="invisible">
                 <h1>Startseite</h1>
+                <h2 id="still_loading">Warte bis KI-Modelle geladen sind...</h2>
                 <p>text text text text text text text text text text text text text text text text text text</p>
+            </section>
         </div>
     </div>
     <div id="example1" style="display: none;">
@@ -33,8 +36,14 @@
     </div>
     <div id="example2" style="display: none;">
         <div class="content">
-                <h1>example2</h1>
-                <p>text text text text text text text text text text text text text text text text text text</p>
+                <h1>Objekterkennung</h1>
+                <section id="demos" class="invisible">
+                    <div id="liveView" class="videoView">
+                        <button id="webcamButton">Enable Webcam</button>
+                        <video id="webcam" autoplay></video>
+                    </div>
+                </section>
+                <!--<p>text text text text text text text text text text text text text text text text text text</p>-->
         </div>
     </div>
     <div id="example3" style="display: none;">
@@ -58,6 +67,9 @@
                 <p>text text text text text text text text text text text text text text text text text text</p>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
     <script src="script.js"></script>
 </body>
 </html>

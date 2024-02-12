@@ -16,11 +16,14 @@ function show(shown, link) {
 }
 
 // OBJEKTERKENNUNG
+// Basiert auf folgenden Tutorial
+// https://codelabs.developers.google.com/codelabs/tensorflowjs-object-detection/#0
 
 const cam_section = document.getElementById("cam_section");
 const startpage_section = document.getElementById("startpage");
 
 var object_model = undefined;
+
 
 function load_cocoSsd_model() {
     document.getElementById("still_loading").classList.remove("removed");
@@ -34,6 +37,7 @@ function load_cocoSsd_model() {
     });
 
 }
+
 
 
 const video = document.getElementById("webcam");
@@ -143,6 +147,7 @@ function predict_webcam() {
 
 var canvas = document.getElementById("drawing_canvas");
 var context = canvas.getContext("2d");
+
 document.addEventListener("DOMContentLoaded", function () {
     var mouse_pos = {
         x: 0,
@@ -164,6 +169,9 @@ document.addEventListener("DOMContentLoaded", function () {
             canvas.height = window.innerHeight / 3;
             canvas.width = window.innerHeight / 3;
         }
+        canvas.style.marginLeft = window.innerWidth / 2 - canvas.width + "px";
+        document.getElementById("delete_button").style.marginLeft = window.innerWidth / 2 - canvas.width + "px";
+        document.getElementById("prediction_text").style.marginLeft = window.innerWidth / 2 - canvas.width + "px";
         draw(canvas);
     }
     resize_canvas();
@@ -262,26 +270,29 @@ async function loadModel() {
 loadModel();
 
 async function predict() {
-    var input_canvas = document.createElement("canvas");
-    input_canvas.width = 28;
-    input_canvas.height = 28;
-    var input_context = input_canvas.getContext("2d");
-    input_context.filter = "grayscale(1)"
-    input_context.drawImage(canvas, 0, 0, 28, 28);
-    const imageData = input_context.getImageData(0, 0, 28, 28);
-    const data = imageData.data;
-    var input_array = [];
+    // var input_canvas = document.createElement("canvas");
+    // input_canvas.width = 28;
+    // input_canvas.height = 28;
+    // var input_context = input_canvas.getContext("2d");
+    // input_context.filter = "grayscale(1)"
+    // input_context.drawImage(canvas, 0, 0, 28, 28);
+    // const imageData = input_context.getImageData(0, 0, 28, 28);
+    // const data = imageData.data;
+    // var input_array = [];
 
-    for (var i = 0; i < data.length; i += 4) {
-        input_array.push(data[i] / 255);
-    }
-    console.log(input_array);
-    digit_model.predict([tf.tensor(input_array).reshape([1, 28, 28, 1])]).array().then(function (scores) {
-        scores = scores[0];
-        predicted = scores.indexOf(Math.max(...scores));
-        console.log(predicted);
-        document.getElementById("prediction_label").textContent = predicted;
-    });
+    // for (var i = 0; i < data.length; i += 4) {
+    //     input_array.push(data[i] / 255);
+    // }
+    // console.log(input_array);
+    // digit_model.predict([tf.tensor(input_array).reshape([1, 28, 28, 1])]).array().then(function (scores) {
+    //     scores = scores[0];
+    //     predicted = scores.indexOf(Math.max(...scores));
+    //     console.log(predicted);
+    //     document.getElementById("prediction_label").textContent = predicted;
+    // });
+    const to_predict = tf.browser.fromPixels(canvas).resizeBilinear([28, 28]).mean(2).expandDims().expandDims(3).toFloat().div(255.0);
+    const prediction = digit_model.predict(to_predict).dataSync();
+    document.getElementById("prediction_label").textContent = tf.argMax(prediction).dataSync();
 }
 
 
@@ -299,12 +310,18 @@ const win_conditons = [
     [1, 4, 7], // mittlere Spalte
     [2, 5, 8], // rechte Spalte
     [0, 4, 8], // Diagonale links
-    [2, 4, 6] // Diagonale rechts
+    [2, 4, 6]  // Diagonale rechts
 ];
 
 let legal_moves = ["", "", "", "", "", "", "", "", ""];
 let current_player = "X";
 let running = false;
+
+var difficulty = "easy";
+
+function select_difficulty(input) {
+    difficulty = input;
+}
 
 start_game();
 
@@ -337,12 +354,22 @@ function update_cell(cell, index) {
 function change_player() {
     current_player = (current_player == "X") ? "O" : "X";
     if (current_player == "O") {
-        setTimeout(make_ai_move, 500);
+        if (difficulty == "easy") {
+            console.log("easy");
+            setTimeout(make_easy_ai_move, 500);
+        } if (difficulty == "medium") {
+            console.log("mittel");
+            setTimeout(make_medium_ai_move, 500);
+        } if (difficulty == "hard") {
+            console.log("schwer");
+            setTimeout(make_hard_ai_move, 500);
+        }
+        
     }
     status_text.textContent = `${current_player} ist dran`;
 }
 
-function make_ai_move() {
+function make_easy_ai_move() {
     let move = Math.floor(Math.random() * 9);
     let ai_cell = document.getElementById("cell" + move);
     if (legal_moves[move] != "") {
@@ -354,6 +381,29 @@ function make_ai_move() {
     }
 }
 
+function make_medium_ai_move() {
+    let move = Math.floor(Math.random() * 9);
+    let ai_cell = document.getElementById("cell" + move);
+    if (legal_moves[move] != "") {
+        make_ai_move();
+    } else {
+        legal_moves[move] = current_player;
+        ai_cell.textContent = current_player;
+        check_for_winner();
+    }
+}
+
+function make_hard_ai_move() {
+    let move = Math.floor(Math.random() * 9);
+    let ai_cell = document.getElementById("cell" + move);
+    if (legal_moves[move] != "") {
+        make_ai_move();
+    } else {
+        legal_moves[move] = current_player;
+        ai_cell.textContent = current_player;
+        check_for_winner();
+    }
+}
 function check_for_winner() {
     let round_won = false;
     for (let i = 0; i < win_conditons.length; i++) {

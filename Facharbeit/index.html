@@ -30,9 +30,9 @@
             <h1>Ziffernerkennung</h1>
             <canvas class="drawing_canvas" id="drawing_canvas"></canvas>
             <div>
-                <button class="delete_button" onclick="delete_canvas()">Löschen</button>
+                <button class="delete_button" id="delete_button" onclick="delete_canvas()">Löschen</button>
             </div>
-            <p>Das KI-Modell erkennt eine <span id="prediction_label"> </span></p>
+            <p id="prediction_text">Das KI-Modell erkennt eine <span id="prediction_label"> </span></p>
         </div>
     </div>
     <div id="example2" style="display: none;">
@@ -64,7 +64,14 @@
                     <div id="cell7" cell_index="7" class="cell"></div>
                     <div id="cell8" cell_index="8" class="cell"></div>
                 </div>
-                <button id="restart_button">Neues Spiel</button>
+                <div class="difficulty_selector">
+                    <button id="restart_button">Neues Spiel</button>
+                    <select name="difficulty" id="difficulty_setting" onchange="select_difficulty(this.value)">
+                        <option value="easy">Schwierigkeit: Einfach</option>
+                        <option value="medium">Schwierigkeit: Mittel</option>
+                        <option value="hard">Schwierigkeit: Schwer</option>
+                    </select>
+                </div>
                 <p id="status_text"></p>
             </div>
             <p>text text text text text text text text text text text text text text text text text text</p>

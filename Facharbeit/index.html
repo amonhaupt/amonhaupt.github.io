@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <title>Facharbeit</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <!-- <script src="model.js"></script> -->
 </head>
+
 <body scroll="no" style="overflow: hidden">
     <div class="sidebar">
         <a id="link1" class="active" href="" onclick="return show('home', 'link1');">Startseite</a>
@@ -17,54 +19,55 @@
     </div>
     <div id="home">
         <div class="content">
-            <section id="startpage" class="invisible">
+            <section id="startpage">
                 <h1>Startseite</h1>
-                <h2 id="still_loading">Warte bis KI-Modelle geladen sind...</h2>
                 <p>text text text text text text text text text text text text text text text text text text</p>
             </section>
         </div>
     </div>
     <div id="example1" style="display: none;">
         <div class="content">
-                <h1>Ziffernerkennung</h1>
-                <canvas class="drawing_canvas" id="drawing_canvas"></canvas>
-                <div>
+            <h1>Ziffernerkennung</h1>
+            <canvas class="drawing_canvas" id="drawing_canvas"></canvas>
+            <div>
                 <button class="delete_button" onclick="delete_canvas()">Löschen</button>
-                </div>
-                <p>Das KI-Modell erkennt eine <span id="prediction_label"> </span></p>
+            </div>
+            <p>Das KI-Modell erkennt eine <span id="prediction_label"> </span></p>
         </div>
     </div>
     <div id="example2" style="display: none;">
         <div class="content">
-                <h1>Objekterkennung</h1>
-                <section id="demos" class="invisible">
-                    <div id="liveView" class="videoView">
-                        <button id="webcamButton">Enable Webcam</button>
-                        <video id="webcam" autoplay></video>
-                    </div>
-                </section>
-                <!--<p>text text text text text text text text text text text text text text text text text text</p>-->
+            <h1>Objekterkennung</h1>
+            <button id="load_model_button" onclick="load_cocoSsd_model()">KI-Modell laden</button>
+            <section id="cam_section" class="invisible">
+                <h2 id="still_loading" class="removed">Warte bis KI-Modelle geladen sind...</h2>
+                <div id="liveView" class="videoView">
+                    <button id="webcam_button">Enable Webcam</button>
+                    <video id="webcam" autoplay></video>
+                </div>
+            </section>
+            <!--<p>text text text text text text text text text text text text text text text text text text</p>-->
         </div>
     </div>
     <div id="example3" style="display: none;">
         <div class="content">
-                <h1>Tic-Tac-Toe</h1>
-                <div id="tictactoe_game">
-                    <div id="cells">
-                        <div id="cell0" cell_index="0" class="cell"></div>
-                        <div id="cell1" cell_index="1" class="cell"></div>
-                        <div id="cell2" cell_index="2" class="cell"></div>
-                        <div id="cell3" cell_index="3" class="cell"></div>
-                        <div id="cell4" cell_index="4" class="cell"></div>
-                        <div id="cell5" cell_index="5" class="cell"></div>
-                        <div id="cell6" cell_index="6" class="cell"></div>
-                        <div id="cell7" cell_index="7" class="cell"></div>
-                        <div id="cell8" cell_index="8" class="cell"></div>
-                    </div>
-                    <button id="restart_button">Neues Spiel</button>
-                    <p id="status_text"></p>
+            <h1>Tic-Tac-Toe</h1>
+            <div id="tictactoe_game">
+                <div id="cells">
+                    <div id="cell0" cell_index="0" class="cell"></div>
+                    <div id="cell1" cell_index="1" class="cell"></div>
+                    <div id="cell2" cell_index="2" class="cell"></div>
+                    <div id="cell3" cell_index="3" class="cell"></div>
+                    <div id="cell4" cell_index="4" class="cell"></div>
+                    <div id="cell5" cell_index="5" class="cell"></div>
+                    <div id="cell6" cell_index="6" class="cell"></div>
+                    <div id="cell7" cell_index="7" class="cell"></div>
+                    <div id="cell8" cell_index="8" class="cell"></div>
                 </div>
-                <p>text text text text text text text text text text text text text text text text text text</p>
+                <button id="restart_button">Neues Spiel</button>
+                <p id="status_text"></p>
+            </div>
+            <p>text text text text text text text text text text text text text text text text text text</p>
         </div>
     </div>
 
@@ -72,4 +75,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

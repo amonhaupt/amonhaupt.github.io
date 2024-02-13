@@ -181,14 +181,36 @@ video {
     cursor: pointer;
 }
 
-#disable_cam_button {
-    background-color: rgb(233, 0, 0);
-    border: none;
-    color: rgb(255, 255, 255);
-    padding: 10px 10px;
-    text-align: center;
-    font-size: 20px;
-    cursor: pointer;
+/* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader */
+.loader {
+    border: 10px solid rgb(243, 243, 243);
+    border-radius: 50%;
+    border-top: 10px solid rgb(233, 0, 0);
+    width: 75px;
+    height: 75px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 #webcam_button {

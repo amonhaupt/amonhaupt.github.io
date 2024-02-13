@@ -64,7 +64,7 @@ function enable_cam(event) {
 
     event.target.classList.add("removed");
 
-    video_box = window.innerWidth - 12;
+    video_box = window.innerWidth - 44;
     
     const constraints = {
         video: {
@@ -97,6 +97,7 @@ function disable_cam() {
     // console.log(live_view_children);
     liveView.remove(3);
     liveView.remove(4);
+    document.getElementById("webcam_button").classList.remove("removed");
     
 }
 

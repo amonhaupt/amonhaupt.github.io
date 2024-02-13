@@ -181,6 +181,16 @@ video {
     cursor: pointer;
 }
 
+#disable_cam_button {
+    background-color: rgb(233, 0, 0);
+    border: none;
+    color: rgb(255, 255, 255);
+    padding: 10px 10px;
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+
 #webcam_button {
     background-color: rgb(233, 0, 0);
     border: rgb(255, 255, 255);

@@ -95,8 +95,8 @@ function disable_cam() {
     document.getElementById("disable_cam_button").classList.add("removed");
     let live_view_children = liveView.children;
     console.log(live_view_children);
-    liveView.remove(3);
-    liveView.remove(4);
+    // liveView.remove(3);
+    // liveView.remove(4);
     document.getElementById("webcam_button").classList.remove("removed");
     
 }

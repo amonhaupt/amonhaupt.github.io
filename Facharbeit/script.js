@@ -324,7 +324,7 @@ let ai_player = "O";
 let current_player = "X";
 let running = false;
 
-var difficulty = "easy";
+var difficulty = document.getElementById("difficulty_setting").value;
 
 function select_difficulty(input) {
     difficulty = input;
@@ -369,7 +369,7 @@ function change_player() {
             } if (difficulty == "medium") {
                 setTimeout(make_medium_ai_move, 500);
             } if (difficulty == "hard") {
-                make_hard_ai_move();
+                setTimeout(make_hard_ai_move, 500);
             }
             
         }
@@ -377,124 +377,6 @@ function change_player() {
         current_player = human_player
     }
     status_text.textContent = `${current_player} ist dran`;
-}
-
-function make_easy_ai_move() {
-    let move = Math.floor(Math.random() * 9);
-    let ai_cell = document.getElementById("cell" + move);
-    if (legal_moves[move] != "") {
-        make_easy_ai_move();
-    } else {
-        legal_moves[move] = current_player;
-        ai_cell.textContent = current_player;
-        check_for_winner();
-    }
-}
-
-function make_medium_ai_move() {
-    let move = Math.floor(Math.random() * 9);
-    let ai_cell = document.getElementById("cell" + move);
-    if (legal_moves[move] != "") {
-        make_medium_ai_move();
-    } else {
-        legal_moves[move] = current_player;
-        ai_cell.textContent = current_player;
-        check_for_winner();
-    }
-}
-
-let move_scores = {
-    X: -1,
-    O: 1,
-    tie: 0
-};
-
-function evaluate(current_legal_moves) {
-    let round_won = false;
-    for (let i = 0; i < win_conditons.length; i++) {
-        const condition = win_conditons[i]; // i = 0 -> [0, 1, 2] obere Reihe
-        const cell_1 = current_legal_moves[condition[0]]; // cell_1 == 0
-        const cell_2 = current_legal_moves[condition[1]]; // cell_2 == 1
-        const cell_3 = current_legal_moves[condition[2]]; // cell_3 == 2
-
-        if (cell_1 == "" || cell_2 == "" || cell_3 == "") { // (|| <- steht für oder)
-            continue; // wenn eine Zelle oder mehrere leer sind neustarten mit i + 1 
-        }
-        if (cell_1 == cell_2 & cell_2 == cell_3) {
-            round_won = true;
-            break; // wenn alle Zellen 1 bis 3 gleich sind also z.B. X dann ist die Runde gewonnen
-        }
-    }
-    if (round_won) {
-        return current_player;
-    } else if (!current_legal_moves.includes("")) {
-        return "tie";
-    } else {
-        return null;
-    }
-}
-
-function minimax(current_legal_moves, depth, is_maximizing) {
-    let result = evaluate(current_legal_moves);
-    if (result !== null) {
-        let score = move_scores[result]
-        return score;
-    }
-    if (is_maximizing) {
-        let best_score = -Infinity;
-        for (let i = 0; i < 9; i++) {
-            if (current_legal_moves[i] == "") {
-                current_legal_moves[i] = ai_player;
-                let given_score = minimax(current_legal_moves, depth + 1, false);
-                current_legal_moves[i] = "";
-                best_score = Math.max(given_score, best_score);
-            }
-        }
-        return best_score;
-    } else {
-        let best_score = Infinity;
-        for (let i = 0; i < 9; i++) {
-            if (current_legal_moves[i] == "") {
-                current_legal_moves[i] = human_player;
-                let given_score = minimax(current_legal_moves, depth + 1, true);
-                current_legal_moves[i] = "";
-                best_score = Math.min(given_score, best_score);
-            }
-        }
-        return best_score;
-    }
-}
-
-function best_move() {
-    // console.log("best_move")
-    let best_score = -Infinity;
-    let move_to_make;
-    for (let i = 0; i < 9; i++) {
-        if (current_legal_moves[i] == "") {
-            current_legal_moves[i] = ai_player;
-            let given_score = minimax(current_legal_moves, 0, false);
-            current_legal_moves[i] = "";
-            if (given_score > best_score) {
-                best_score = given_score;
-                move_to_make = i;
-            }
-        }
-    }
-    return move_to_make; 
-}
-
-function make_hard_ai_move() {
-    if (current_player == human_player) {
-        return;
-    } else {
-        let move = best_move();
-        let ai_cell = document.getElementById("cell" + move);
-        legal_moves[move] = current_player;
-        current_legal_moves = legal_moves;
-        ai_cell.textContent = current_player;
-        check_for_winner();
-    }
-
 }
 
 function check_for_winner() {
@@ -534,3 +416,127 @@ function restart_game() {
     cells.forEach(cell => cell.textContent = "");
     running = true;
 }
+
+function make_easy_ai_move() {
+    for (let i = 0; i < 9; i++) {
+        if (legal_moves[i] == "") {
+            let move = i;
+            let ai_cell = document.getElementById("cell" + move);
+            legal_moves[move] = current_player;
+            ai_cell.textContent = current_player;
+            check_for_winner();
+            break;
+        }
+    }
+}
+
+function make_medium_ai_move() {
+    let move = Math.floor(Math.random() * 9);
+    let ai_cell = document.getElementById("cell" + move);
+    if (legal_moves[move] != "") {
+        make_medium_ai_move();
+    } else {
+        legal_moves[move] = current_player;
+        ai_cell.textContent = current_player;
+        check_for_winner();
+    }
+}
+
+var move_scores = {
+    X: 10,
+    O: -10,
+    tie: 0
+};
+
+function minimax(current_legal_moves, depth, is_maximizing) {
+    let result = evaluate(current_legal_moves, is_maximizing);
+    if (result !== null) {
+        return move_scores[result];
+    }
+    if (is_maximizing) {
+        let best_score = -Infinity;
+        for (let i = 0; i < 9; i++) {
+            if (current_legal_moves[i] == "") {
+                current_legal_moves[i] = human_player;
+                let given_score = minimax(current_legal_moves, depth + 1, false);
+                current_legal_moves[i] = "";
+                best_score = Math.max(given_score, best_score);
+            }
+        }
+        return best_score;
+    } else {
+        let best_score = +Infinity;
+        for (let i = 0; i < 9; i++) {
+            if (current_legal_moves[i] == "") {
+                current_legal_moves[i] = ai_player;
+                let given_score = minimax(current_legal_moves, depth + 1, true);
+                current_legal_moves[i] = "";
+                best_score = Math.min(given_score, best_score);
+            }
+        }
+        return best_score;
+    }
+}
+
+function evaluate(current_legal_moves, is_maximizing) {
+    let round_won = false;
+    for (let i = 0; i < win_conditons.length; i++) {
+        const condition = win_conditons[i]; // i = 0 -> [0, 1, 2] obere Reihe
+        const cell_1 = current_legal_moves[condition[0]]; // cell_1 == 0
+        const cell_2 = current_legal_moves[condition[1]]; // cell_2 == 1
+        const cell_3 = current_legal_moves[condition[2]]; // cell_3 == 2
+
+        if (cell_1 == "" || cell_2 == "" || cell_3 == "") { // (|| <- steht für oder)
+            continue; // wenn eine Zelle oder mehrere leer sind neustarten mit i + 1 
+        }
+        if (cell_1 == cell_2 & cell_2 == cell_3) {
+            round_won = true;
+            break; // wenn alle Zellen 1 bis 3 gleich sind also z.B. X dann ist die Runde gewonnen
+        }
+    }
+    if (is_maximizing) {
+        var cp = ai_player;
+    } else {
+        cp = human_player;
+    }
+    if (round_won) {
+        return cp;
+    } else if (!current_legal_moves.includes("")) {
+        return "tie";
+    } else {
+        return null;
+    }
+}
+
+
+function best_move() {
+    let best_score = +Infinity;
+    let move_to_make;
+    for (let i = 0; i < 9; i++) {
+        if (current_legal_moves[i] == "") {
+            current_legal_moves[i] = ai_player;
+            let move_score = minimax(current_legal_moves, 0, true);
+            current_legal_moves[i] = "";
+            if (move_score < best_score) {
+                best_score = move_score;
+                move_to_make = i;
+            }
+        }
+    }
+    return move_to_make; 
+}
+
+function make_hard_ai_move() {
+    if (current_player == human_player) {
+        return;
+    } else {
+        let move = best_move();
+        let ai_cell = document.getElementById("cell" + move);
+        legal_moves[move] = ai_player;
+        current_legal_moves = legal_moves;
+        ai_cell.textContent = ai_player;
+        check_for_winner();
+    }
+
+}
+

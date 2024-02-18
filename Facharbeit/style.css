@@ -3,7 +3,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
@@ -133,7 +133,7 @@ div.content {
 }
 
 #tictactoe_game {
-    font-family: "Brush Script MT", cursive;
+    font-family: "Brush Script MT", cursive, Arial, Helvetica, sans-serif;
     text-align: center;
 }
 

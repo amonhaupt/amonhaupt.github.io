@@ -58,7 +58,6 @@ if (hasGetUserMedia()) {
 
 function enable_cam(event) {
     if (!object_model) {
-        //console.log("Model not loaded")
         return;
     }
 
@@ -89,10 +88,8 @@ var german_words = ['Person', 'Fahrrad', 'Auto', 'Motorrad', 'Flugzeug', 'Bus', 
 function translate(input) {
     if (english_words.includes(input)) {
         var translated_word = german_words[english_words.indexOf(input)];
-        //console.log(translated_word);
         return translated_word;
     } else {
-        //console.log(input);
         return input;
     }
 }
@@ -112,7 +109,6 @@ function predict_webcam() {
 
             if (predictions[n].score > 0.66) {
                 const p = document.createElement("p");
-                //console.log(typeof(predictions[n].class));
                 var translation = translate(predictions[n].class);
                 p.innerText = translation + " - mit " +
                     Math.round(parseFloat(predictions[n].score) * 100) +
@@ -273,26 +269,6 @@ async function loadModel() {
 loadModel();
 
 async function predict() {
-    // var input_canvas = document.createElement("canvas");
-    // input_canvas.width = 28;
-    // input_canvas.height = 28;
-    // var input_context = input_canvas.getContext("2d");
-    // input_context.filter = "grayscale(1)"
-    // input_context.drawImage(canvas, 0, 0, 28, 28);
-    // const imageData = input_context.getImageData(0, 0, 28, 28);
-    // const data = imageData.data;
-    // var input_array = [];
-
-    // for (var i = 0; i < data.length; i += 4) {
-    //     input_array.push(data[i] / 255);
-    // }
-    // console.log(input_array);
-    // digit_model.predict([tf.tensor(input_array).reshape([1, 28, 28, 1])]).array().then(function (scores) {
-    //     scores = scores[0];
-    //     predicted = scores.indexOf(Math.max(...scores));
-    //     console.log(predicted);
-    //     document.getElementById("prediction_label").textContent = predicted;
-    // });
     const to_predict = tf.browser.fromPixels(canvas).resizeBilinear([28, 28]).mean(2).expandDims().expandDims(3).toFloat().div(255.0);
     const prediction = digit_model.predict(to_predict).dataSync();
     document.getElementById("prediction_label").textContent = tf.argMax(prediction).dataSync();
@@ -360,7 +336,6 @@ function update_cell(cell, index) {
 }
 
 function change_player() {
-    console.log(current_player)
     if (current_player == human_player) {
         current_player = ai_player
         if (current_player == "O") {
@@ -418,16 +393,33 @@ function restart_game() {
 }
 
 function make_easy_ai_move() {
+    if (current_player == human_player) {
+        return;
+    } else {
+        let move = worst_move();
+        let ai_cell = document.getElementById("cell" + move);
+        legal_moves[move] = ai_player;
+        current_legal_moves = legal_moves;
+        ai_cell.textContent = ai_player;
+        check_for_winner();
+    }
+}
+
+function worst_move() {
+    let best_score = -10;
+    let move_to_make;
     for (let i = 0; i < 9; i++) {
-        if (legal_moves[i] == "") {
-            let move = i;
-            let ai_cell = document.getElementById("cell" + move);
-            legal_moves[move] = current_player;
-            ai_cell.textContent = current_player;
-            check_for_winner();
-            break;
+        if (current_legal_moves[i] == "") {
+            current_legal_moves[i] = ai_player;
+            let move_score = minimax(current_legal_moves, 0, true);
+            current_legal_moves[i] = "";
+            if (move_score > best_score) {
+                best_score = move_score;
+                move_to_make = i;
+            }
         }
     }
+    return move_to_make; 
 }
 
 function make_medium_ai_move() {

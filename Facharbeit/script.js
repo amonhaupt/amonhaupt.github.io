@@ -1,7 +1,7 @@
 var previous = "home"
 var previous_link = "link1"
 
-function show(shown, link) {
+function show(shown, link) { // Sorgt dafür dass die Aktive Seite rot markiert ist
     if (shown == previous) {
         return false;
     } else {
@@ -25,7 +25,8 @@ const startpage_section = document.getElementById("startpage");
 var object_model = undefined;
 
 
-function load_cocoSsd_model() {
+function load_cocoSsd_model() { // Laden des KI-Modells
+    document.getElementById("below").classList.add("removed");
     document.getElementById("still_loading").classList.remove("removed");
     cocoSsd.load().then(function (loadedModel) {
         object_model = loadedModel;
@@ -42,21 +43,21 @@ function load_cocoSsd_model() {
 const video = document.getElementById("webcam");
 const liveView = document.getElementById("liveView");
 
-function hasGetUserMedia() {
+function hasGetUserMedia() { // prüft ob eine Kamera vorhanden ist
     return !!(navigator.mediaDevices &&
         navigator.mediaDevices.getUserMedia);
 }
 
 var children = [];
 
-if (hasGetUserMedia()) {
+if (hasGetUserMedia()) { // wenn eine Kamera vorhanden ist kann sie aktiviert werden
     const enable_webcam_button = document.getElementById("webcam_button");
     enable_webcam_button.addEventListener("click", enable_cam);
 } else {
     console.warn("getUserMedia() is not supported by your browser");
 }
 
-function enable_cam(event) {
+function enable_cam(event) { // Funktion aktiviert Kamera mit gegebenen vorgaben
     if (!object_model) {
         return;
     }
@@ -64,18 +65,18 @@ function enable_cam(event) {
     event.target.classList.add("removed");
 
     video_box = window.innerWidth - 44;
-    
+
     const constraints = {
         video: {
             facingMode: {
-                exact: "environment"
+                exact: "environment" // Nutzt eine der vorhandenen Kameras auf der Hinterseite des Handys
             },
             width: video_box,
             height: video_box
         }
     };
 
-    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) { // Aktivierung der Kamera und starten der Vorhersagen
         video.srcObject = stream;
         video.addEventListener("loadeddata", predict_webcam);
     });
@@ -85,7 +86,7 @@ var english_words = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus'
 var german_words = ['Person', 'Fahrrad', 'Auto', 'Motorrad', 'Flugzeug', 'Bus', 'Zug', 'LKW', 'Boot', 'Ampel', 'Feuerhydrant', 'Stoppschild', 'Parkuhr', 'Bank', 'Vogel', 'Katze', 'Hund', 'Pferd', 'Schaf', 'Kuh', 'Elefant', 'tragen', 'Zebra', 'Giraffe', 'Rucksack', 'Regenschirm', 'Handtasche', 'binden', 'Koffer', 'Frisbeescheibe', 'Skier', 'Snowboard', 'Sportball', 'Drachen', 'Baseballschläger', 'Baseballhandschuh', 'Skateboard', 'Surfbrett', 'Tennisschläger', 'Flasche', 'Weinglas', 'Tasse', 'Gabel', 'Messer', 'Löffel', 'Schüssel', 'Banane', 'Apfel', 'Sandwich', 'orange', 'Brokkoli', 'Karotte', 'Hotdog', 'Pizza', 'Krapfen', 'Kuchen', 'Stuhl', 'Couch', 'Topfpflanze', 'Bett', 'Esstisch', 'Toilette', 'Fernseher', 'Laptop', 'Maus', 'Fernbedienung', 'Tastatur', 'Handy', 'Mikrowelle', 'Ofen', 'Toaster', 'Waschbecken', 'Kühlschrank', 'Buch', 'Uhr', 'Vase', 'Schere', 'Teddybär', 'Fön', 'Zahnbürste'];
 
 
-function translate(input) {
+function translate(input) { // Das vortrainierte KI-Modell gibt englische Begriffe aus, die Funktion übersetzt diese mit den Listen weiter Oben
     if (english_words.includes(input)) {
         var translated_word = german_words[english_words.indexOf(input)];
         return translated_word;
@@ -100,25 +101,25 @@ function predict_webcam() {
 
     object_model.detect(video).then(function (predictions) {
 
-        for (let i = 0; i < children.length; i++) {
+        for (let i = 0; i < children.length; i++) { // entfernt Markierungen des vorherigen Frames
             liveView.removeChild(children[i]);
         }
         children.splice(0);
 
-        for (let n = 0; n < predictions.length; n++) {
+        for (let n = 0; n < predictions.length; n++) { // geht durch alle Vorhersagen und zeigt sie an wenn ...
 
-            if (predictions[n].score > 0.66) {
+            if (predictions[n].score > 0.66) { // ... zu mehr als 66% sicher
                 const p = document.createElement("p");
                 var translation = translate(predictions[n].class);
                 p.innerText = translation + " - mit " +
                     Math.round(parseFloat(predictions[n].score) * 100) +
                     "% Sicherheit";
 
-                p.style = "left: " + predictions[n].bbox[0] + "px;" +
+                p.style = "left: " + predictions[n].bbox[0] + "px;" + // Zeichnet die Box mit der Vorhersage
                     "top: " + predictions[n].bbox[1] + "px;" +
                     "width: " + (predictions[n].bbox[2] - 10) + "px;";
 
-                const highlighter = document.createElement("div");
+                const highlighter = document.createElement("div"); // Zeichnet die Markierung
                 highlighter.setAttribute("class", "highlighter");
                 highlighter.style = "left: " + predictions[n].bbox[0] + "px; top: " +
                     predictions[n].bbox[1] + "px; width: " +
@@ -138,11 +139,7 @@ function predict_webcam() {
 }
 
 // ZIFFERNERKENNUNG
-
-//https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
-//https://developer.mozilla.org/en-US/docs/Web/API/Path2D
-//https://developer.mozilla.org/en-US/docs/Web/API/Element/mousedown_event
-//https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
+//Practical TensorFlow.js Deep Learning in Web App Development (Juan De Dios Santos Rivera) - ab Seite 114
 
 var canvas = document.getElementById("drawing_canvas");
 var context = canvas.getContext("2d");
@@ -160,10 +157,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var line_width = 20;
 
-    function resize_canvas() {
+    function resize_canvas() { // Passt den Canvas an die Bildschirm größe an
         if (window.innerHeight > window.innerWidth) {
             canvas.height = window.innerWidth / 2;
-            canvas.width = window.innerWidth / 2; //elif window.innerwidth > x == width/3
+            canvas.width = window.innerWidth / 2;
         } else {
             canvas.height = window.innerHeight / 3;
             canvas.width = window.innerHeight / 3;
@@ -184,36 +181,36 @@ document.addEventListener("DOMContentLoaded", function () {
     canvas.addEventListener("touchmove", touch_draw);
     canvas.addEventListener("touchend", stop_touch_drawing);
 
-    function get_position(e) {
+    function get_position(e) { // gibt die aktuelle Maus Position relativ zum Canvas wieder
         mouse_pos.x = e.clientX - canvas.getBoundingClientRect().left;
         mouse_pos.y = e.clientY - canvas.getBoundingClientRect().top;
     }
 
-    function start_drawing(e) {
+    function start_drawing(e) { // startet das Zeichnen
         is_drawing = true;
         get_position(e);
         draw(e);
     }
 
-    function draw(e) {
+    function draw(e) { // Hauptfunktion zum Zeichnen
         if (!is_drawing) return;
 
         if (is_drawing) {
             context.beginPath();
-            context.lineWidth = line_width;
-            context.lineCap = "round";
-            context.strokeStyle = "rgb(233, 0, 0)";
-            context.moveTo(mouse_pos.x, mouse_pos.y);
-            get_position(e);
-            context.lineTo(mouse_pos.x, mouse_pos.y);
-            context.stroke();
+            context.lineWidth = line_width; // Linienstärke
+            context.lineCap = "round"; // Linienart
+            context.strokeStyle = "rgb(233, 0, 0)"; // Linienfarbe
+            context.moveTo(mouse_pos.x, mouse_pos.y); // Startposition
+            get_position(e); // aktuelle Position
+            context.lineTo(mouse_pos.x, mouse_pos.y); // Zeichnet eine Linie von der Startposition zu aktuellen Position
+            context.stroke(); // füllt die Linie mit Farbe
         }
     }
 
-    function stop_drawing() {
+    function stop_drawing() { // wenn die Maustaste losgelassen wird stoppt das Zeichnen
         is_drawing = false;
         context.closePath();
-        predict();
+        predict(); // startet die Vorhersage
     }
 
     function get_touch_position(e) {
@@ -258,18 +255,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function delete_canvas() {
+function delete_canvas() { // überschreibt jeden Pixel mit Weißen
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-async function loadModel() {
+async function loadModel() { // lädt das KI-Modell
     digit_model = undefined;
     digit_model = await tf.loadGraphModel("models/model.json");
 }
 loadModel();
 
-async function predict() {
+// Practical TensorFlow.js Deep Learning in Web App Development (Juan De Dios Santos Rivera) - Seite 116
+async function predict() { // erstell eine Vorhersage anhand der Zeichnung im Canvas
     const to_predict = tf.browser.fromPixels(canvas).resizeBilinear([28, 28]).mean(2).expandDims().expandDims(3).toFloat().div(255.0);
+    //resizeBiliniear([28, 28]) - Tensor zu 28x28 Pixel nötig da Modell nur Eingaben von 28x28 Pixeln erkennen kann
+    //mean(2) - Macht das Bild Schwarz-Weiß
+    //expandDims() - Umformt den Tensor zu [1, 28, 28, 1]
+    //float() - wandelt die Werte in Kommazahlen um
+    //div(255.0) - Teilt die Werte durch 255 um sie zu normalisieren (zwischen 0 und 1 - um Graustufen zu erzeugen)
     const prediction = digit_model.predict(to_predict).dataSync();
     document.getElementById("prediction_label").textContent = tf.argMax(prediction).dataSync();
 }
@@ -289,7 +292,7 @@ const win_conditons = [
     [1, 4, 7], // mittlere Spalte
     [2, 5, 8], // rechte Spalte
     [0, 4, 8], // Diagonale links
-    [2, 4, 6]  // Diagonale rechts
+    [2, 4, 6] // Diagonale rechts
 ];
 
 let legal_moves = ["", "", "", "", "", "", "", "", ""];
@@ -341,12 +344,14 @@ function change_player() {
         if (current_player == "O") {
             if (difficulty == "easy") {
                 setTimeout(make_easy_ai_move, 500);
-            } if (difficulty == "medium") {
+            }
+            if (difficulty == "medium") {
                 setTimeout(make_medium_ai_move, 500);
-            } if (difficulty == "hard") {
+            }
+            if (difficulty == "hard") {
                 setTimeout(make_hard_ai_move, 500);
             }
-            
+
         }
     } else {
         current_player = human_player
@@ -373,14 +378,11 @@ function check_for_winner() {
     if (round_won) {
         status_text.textContent = `${current_player} hat gewonnen!`;
         running = false;
-        return current_player;
     } else if (!legal_moves.includes("")) {
         status_text.textContent = `Unentschieden!`;
         running = false;
-        return "tie";
     } else {
         change_player();
-        return null;
     }
 }
 
@@ -397,6 +399,10 @@ function make_easy_ai_move() {
         return;
     } else {
         let move = worst_move();
+        if (move == null) {
+            status_text.textContent = `O gibt auf, X gewinnt!`;
+            running = false;
+        }
         let ai_cell = document.getElementById("cell" + move);
         legal_moves[move] = ai_player;
         current_legal_moves = legal_moves;
@@ -419,7 +425,7 @@ function worst_move() {
             }
         }
     }
-    return move_to_make; 
+    return move_to_make;
 }
 
 function make_medium_ai_move() {
@@ -473,17 +479,17 @@ function minimax(current_legal_moves, depth, is_maximizing) {
 function evaluate(current_legal_moves, is_maximizing) {
     let round_won = false;
     for (let i = 0; i < win_conditons.length; i++) {
-        const condition = win_conditons[i]; // i = 0 -> [0, 1, 2] obere Reihe
-        const cell_1 = current_legal_moves[condition[0]]; // cell_1 == 0
-        const cell_2 = current_legal_moves[condition[1]]; // cell_2 == 1
-        const cell_3 = current_legal_moves[condition[2]]; // cell_3 == 2
+        const condition = win_conditons[i];
+        const cell_1 = current_legal_moves[condition[0]];
+        const cell_2 = current_legal_moves[condition[1]];
+        const cell_3 = current_legal_moves[condition[2]];
 
-        if (cell_1 == "" || cell_2 == "" || cell_3 == "") { // (|| <- steht für oder)
-            continue; // wenn eine Zelle oder mehrere leer sind neustarten mit i + 1 
+        if (cell_1 == "" || cell_2 == "" || cell_3 == "") {
+            continue;
         }
         if (cell_1 == cell_2 & cell_2 == cell_3) {
             round_won = true;
-            break; // wenn alle Zellen 1 bis 3 gleich sind also z.B. X dann ist die Runde gewonnen
+            break;
         }
     }
     if (is_maximizing) {
@@ -515,7 +521,7 @@ function best_move() {
             }
         }
     }
-    return move_to_make; 
+    return move_to_make;
 }
 
 function make_hard_ai_move() {
@@ -531,4 +537,3 @@ function make_hard_ai_move() {
     }
 
 }
-

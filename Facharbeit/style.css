@@ -158,6 +158,12 @@ select {
     cursor: pointer;
 }
 
+#below {
+    position: relative;
+    padding-top: 10px;
+    top: 20%;
+}
+
 video {
     clear: both;
     display: block;
@@ -239,7 +245,7 @@ video {
 .videoView p {
     position: absolute;
     padding: 5px;
-    background-color: rgba(233, 0, 0, 0.39);
+    background-color: rgb(233, 0, 0);
     color: #FFF;
     border: 1px dashed rgba(255, 255, 255, 0.7);
     z-index: 2;

@@ -3,11 +3,12 @@
 
 <head>
     <title>Facharbeit</title>
+    <link rel="icon" type="image/gif" href="Assets/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- <script src="model.js"></script> -->
+    
 </head>
 
 <body scroll="no" style="overflow: hidden">
@@ -21,7 +22,8 @@
         <div class="content">
             <section id="startpage">
                 <h1>Startseite</h1>
-                <p>text text text text text text text text text text text text text text text text text text</p>
+                <p>Auf den folgenden drei Seiten befinden sich die Beispiele meiner Facharbeit für verschiedene
+                    künstliche Intelligenzen.</p>
             </section>
         </div>
     </div>
@@ -33,6 +35,8 @@
                 <button class="delete_button" id="delete_button" onclick="delete_canvas()">Löschen</button>
             </div>
             <p id="prediction_text">Das KI-Modell erkennt eine <span id="prediction_label"> </span></p>
+            <p>Dieses KI-Modell wurde mithilfe von Tensorflow in Python trainiert und kann Handgeschriebene Ziffern von
+                0 bis 9 erkennen (meistens jedenfalls).</p>
         </div>
     </div>
     <div id="example2" style="display: none;">
@@ -40,14 +44,16 @@
             <h1>Objekterkennung</h1>
             <button id="load_model_button" onclick="load_cocoSsd_model()">KI-Modell laden</button>
             <section id="cam_section" class="invisible">
-                <h2 id="still_loading" class="removed">KI-Modell lädt...<div class="loader"></div></h2>
+                <h2 id="still_loading" class="removed">KI-Modell lädt...<div class="loader"></div>
+                </h2>
                 <div id="liveView" class="videoView">
                     <button id="webcam_button">Kamera aktivieren</button>
                     <label>Info: Deaktivieren der Kamera ist nur durch neuladen der Seite möglich</label>
                     <video id="webcam" autoplay></video>
                 </div>
             </section>
-            <!--<p>text text text text text text text text text text text text text text text text text text</p>-->
+            <p id="below">Dieses KI-Modell wurde auf dem COCO-SSD Datensatz trainiert und kann 80 verschiedene
+                Alltagsgegenstände erkennen.</p>
         </div>
     </div>
     <div id="example3" style="display: none;">
@@ -75,11 +81,13 @@
                 </div>
                 <p id="status_text"></p>
             </div>
-            <p>text text text text text text text text text text text text text text text text text text</p>
+            <p>Um die besten oder auch die schlechtesten Züge zu finden verwendet die KI den Minimax Algorithmus,
+                welchen ich in meiner Facharbeit genauer erkläre.</p>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <!-- Importieren des Objekterkennungsmodells-->
 
     <script src="script.js"></script>
 </body>

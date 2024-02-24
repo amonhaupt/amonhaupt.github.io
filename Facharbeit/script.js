@@ -83,7 +83,7 @@ function enable_cam(event) { // Funktion aktiviert Kamera mit gegebenen vorgaben
 }
 
 var english_words = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'];
-var german_words = ['Person', 'Fahrrad', 'Auto', 'Motorrad', 'Flugzeug', 'Bus', 'Zug', 'LKW', 'Boot', 'Ampel', 'Feuerhydrant', 'Stoppschild', 'Parkuhr', 'Bank', 'Vogel', 'Katze', 'Hund', 'Pferd', 'Schaf', 'Kuh', 'Elefant', 'tragen', 'Zebra', 'Giraffe', 'Rucksack', 'Regenschirm', 'Handtasche', 'binden', 'Koffer', 'Frisbeescheibe', 'Skier', 'Snowboard', 'Sportball', 'Drachen', 'Baseballschläger', 'Baseballhandschuh', 'Skateboard', 'Surfbrett', 'Tennisschläger', 'Flasche', 'Weinglas', 'Tasse', 'Gabel', 'Messer', 'Löffel', 'Schüssel', 'Banane', 'Apfel', 'Sandwich', 'orange', 'Brokkoli', 'Karotte', 'Hotdog', 'Pizza', 'Krapfen', 'Kuchen', 'Stuhl', 'Couch', 'Topfpflanze', 'Bett', 'Esstisch', 'Toilette', 'Fernseher', 'Laptop', 'Maus', 'Fernbedienung', 'Tastatur', 'Handy', 'Mikrowelle', 'Ofen', 'Toaster', 'Waschbecken', 'Kühlschrank', 'Buch', 'Uhr', 'Vase', 'Schere', 'Teddybär', 'Fön', 'Zahnbürste'];
+var german_words = ['Person', 'Fahrrad', 'Auto', 'Motorrad', 'Flugzeug', 'Bus', 'Zug', 'LKW', 'Boot', 'Ampel', 'Feuerhydrant', 'Stoppschild', 'Parkuhr', 'Bank', 'Vogel', 'Katze', 'Hund', 'Pferd', 'Schaf', 'Kuh', 'Elefant', 'Bär', 'Zebra', 'Giraffe', 'Rucksack', 'Regenschirm', 'Handtasche', 'Krawatte', 'Koffer', 'Frisbeescheibe', 'Skier', 'Snowboard', 'Sportball', 'Drachen', 'Baseballschläger', 'Baseballhandschuh', 'Skateboard', 'Surfbrett', 'Tennisschläger', 'Flasche', 'Weinglas', 'Tasse', 'Gabel', 'Messer', 'Löffel', 'Schüssel', 'Banane', 'Apfel', 'Sandwich', 'orange', 'Brokkoli', 'Karotte', 'Hotdog', 'Pizza', 'Donut', 'Kuchen', 'Stuhl', 'Couch', 'Topfpflanze', 'Bett', 'Esstisch', 'Toilette', 'Fernseher', 'Laptop', 'Maus', 'Fernbedienung', 'Tastatur', 'Handy', 'Mikrowelle', 'Ofen', 'Toaster', 'Waschbecken', 'Kühlschrank', 'Buch', 'Uhr', 'Vase', 'Schere', 'Teddybär', 'Fön', 'Zahnbürste'];
 
 
 function translate(input) { // Das vortrainierte KI-Modell gibt englische Begriffe aus, die Funktion übersetzt diese mit den Listen weiter Oben
@@ -274,12 +274,13 @@ async function predict() { // erstell eine Vorhersage anhand der Zeichnung im Ca
     //float() - wandelt die Werte in Kommazahlen um
     //div(255.0) - Teilt die Werte durch 255 um sie zu normalisieren (zwischen 0 und 1 - um Graustufen zu erzeugen)
     const prediction = digit_model.predict(to_predict).dataSync();
-    document.getElementById("prediction_label").textContent = tf.argMax(prediction).dataSync();
+    document.getElementById("prediction_label").textContent = tf.argMax(prediction).dataSync(); // Vorhersage mit der höchsten Wahrscheinlichkeit
 }
 
 
 // TIC-TAC-TOE
-// Inspiration: https://www.codebrainer.com/blog/tic-tac-toe-javascript-game (genutzt als Basis)
+// Tic-Tac-Toe Spiel: https://www.codebrainer.com/blog/tic-tac-toe-javascript-game (genutzt als Basis)
+// Minimax Algorithmus: https://youtu.be/trKjYdBASyQ
 
 const cells = document.querySelectorAll(".cell");
 const status_text = document.getElementById("status_text");
@@ -386,7 +387,7 @@ function check_for_winner() {
     }
 }
 
-function restart_game() {
+function restart_game() { // setzt alles auf Ausgangseinstellungen zurück
     current_player = "X";
     legal_moves = ["", "", "", "", "", "", "", "", ""];
     status_text.textContent = `${current_player} ist dran`;
